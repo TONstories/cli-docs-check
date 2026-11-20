@@ -24,3 +24,14 @@ with tempfile.TemporaryDirectory() as folder:
     assert check(["check.py", folder, "--help-dir", "examples/help"], 1) == [
         "nested/guide.md:4: --out absent from pack build help"
     ]
+
+with tempfile.TemporaryDirectory() as folder:
+    target = Path(folder) / "annotated.md"
+    target.write_text(
+        '```bash title="CLI example"\npack build --out result\n```\n'
+        '```bashful title="Other language"\npack build --out result\n```\n'
+        '```\npack build --out result\n```\n'
+    )
+    assert check(["check.py", str(target), "--help-dir", "examples/help"], 1) == [
+        "annotated.md:2: --out absent from pack build help"
+    ]
