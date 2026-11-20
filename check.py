@@ -33,7 +33,8 @@ def scan(lines, label, snapshots, lengths):
         if marker:
             marks, info = marker.groups()
             if fence is None:
-                fence = (marks, info.strip() in {"sh", "bash", "console", "shell", "zsh"})
+                language = info.split(maxsplit=1)
+                fence = (marks, bool(language) and language[0] in {"sh", "bash", "console", "shell", "zsh"})
             elif marks.startswith(fence[0]) and not info.strip():
                 fence = None
             continue
