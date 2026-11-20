@@ -15,8 +15,20 @@ def inspect(path, help_dir):
     if not snapshots:
         raise ValueError("expected help-dir/tool.txt or tool+command.txt")
     findings = []
+    lengths = sorted({len(command) for command in snapshots}, reverse=True)
+    documents = sorted(path.rglob("*.md")) if path.is_dir() else [path]
+    if not documents:
+        raise ValueError("directory contains no Markdown files")
+    for document in documents:
+        label = document.relative_to(path) if path.is_dir() else document.name
+        with document.open(encoding="utf-8") as lines:
+            findings.extend(scan(lines, label, snapshots, lengths))
+    return findings
+
+
+def scan(lines, label, snapshots, lengths):
     fence = None
-    for number, line in enumerate(path.read_text().splitlines(), 1):
+    for number, line in enumerate(lines, 1):
         marker = re.match(r"^ {0,3}(`{3,}|~{3,})(.*)$", line)
         if marker:
             marks, info = marker.groups()
@@ -27,11 +39,18 @@ def inspect(path, help_dir):
             continue
         if not fence or not fence[1]:
             continue
+        if not line.strip():
+            continue
         try:
             words = shlex.split(line.strip().removeprefix("$ "), comments=True)
         except ValueError:
             continue
-        command = max((c for c in snapshots if list(c) == words[:len(c)]), key=len, default=None)
+        command = None
+        for length in lengths:
+            prefix = tuple(words[:length])
+            if prefix in snapshots:
+                command = prefix
+                break
         if not command:
             continue
         for word in words[len(command):]:
@@ -39,8 +58,7 @@ def inspect(path, help_dir):
                 break
             flag = word.partition("=")[0]
             if re.fullmatch(r"--[\w-]+|-[a-zA-Z]", flag) and flag not in snapshots[command]:
-                findings.append(f"{path.name}:{number}: {flag} absent from {' '.join(command)} help")
-    return findings
+                yield f"{label}:{number}: {flag} absent from {' '.join(command)} help"
 
 if __name__ == "__main__":
     import argparse

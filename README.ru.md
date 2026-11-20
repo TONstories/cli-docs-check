@@ -4,7 +4,7 @@
 
 Находит устаревшие флаги в примерах Markdown по сохраненной справке.
 
-![Example report](example.png)
+![CLI Docs Check](banner.webp)
 
 ```sh
 git clone https://github.com/TONstories/cli-docs-check.git
@@ -22,4 +22,4 @@ usage.md:4: --out absent from pack build help
 
 0.039 s · macOS · Python · bundled example · single local run.
 
-Автор — команда TON Stories, сервиса размещения рекламы в Telegram Stories у авторов. [TON Stories](https://tonstories.com/?utm_source=github&utm_medium=referral&utm_campaign=open_source&utm_content=cli-docs-check) · [Telegram](https://t.me/TON_Storiesbot?start=gh_cli_docs_check)
+Автор — команда Tone Stories, сервиса размещения рекламы в Telegram Stories у авторов. [Tone Stories](https://tonstories.com/?utm_source=github&utm_medium=referral&utm_campaign=open_source&utm_content=cli-docs-check) · [Telegram](https://t.me/TON_Storiesbot?start=gh_cli_docs_check)
